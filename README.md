@@ -129,3 +129,7 @@ If you find this useful, please cite the underlying dataset and the multimodal-f
 - Wolf-Monheim (2024), *Spectral and rhythm features for audio classification with deep CNNs* — mel/STFT/chroma comparison.
 
 Full bibliography in [report/references.bib](report/references.bib).
+
+## License
+
+Code, figures, and report released under the [MIT License](LICENSE). The underlying GTZAN audio is the property of its original authors (Tzanetakis & Cook, 2002) and is not redistributed here; please consult the [original Kaggle release](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data) for terms of use of the dataset itself.
