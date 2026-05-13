@@ -1,10 +1,20 @@
-# Multimodal Music Genre Classification on GTZAN
+# Music Genre Classification Using Multi-Branch Convolutional Neural Networks on the GTZAN Dataset
 
-Multi-branch CNN architectures for music genre classification on the [GTZAN](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data) dataset. Three model stages, each fusing an additional acoustic modality, test whether complementary representations yield additive discriminative signal.
+This project builds and compares multi-branch CNN architectures for music genre classification on the [GTZAN](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data) dataset (1000 × 30 s audio clips spanning 10 genres). It investigates in three model stages: a single-modality mel-spectrogram baseline, a three-branch fusion of mel/STFT/chromagram inputs, and the same fusion extended with hand-crafted MIR features which tests whether complementary acoustic representations yield additive discriminative signal under strict track-level evaluation.
 
 > **Final result:** 81.11% top-1 accuracy on a strictly track-split test set, up from 75.96% for a single-modality mel-spectrogram baseline.
 
 Full write-up available in [report/multimodal-music-genre-classifier.pdf](report/multimodal-music-genre-classifier.pdf). Trained checkpoints for all three stages, generated spectrograms, and processed tabular splits are mirrored on [Hugging Face](https://huggingface.co/datasets/tristantanjh/gtzan-multi-cnn) for fast reuse: see [Reproducing](#reproducing).
+
+## Research overview
+
+**Question.** Does fusing complementary acoustic representations improve genre classification beyond a single-modality spectrogram model, and does adding hand-crafted MIR features on top of learned spectrogram embeddings yield further gains?
+
+**Hypothesis.** Mel, STFT and chromagram representations encode largely non-overlapping information (perceptual timbre, high-frequency spectral detail, and harmonic content respectively) so a multi-branch CNN that processes them in parallel should outperform a mel-only baseline. Hand-crafted MIR features (MFCCs, spectral centroid/rolloff/bandwidth, ZCR, RMS, tempo) summarise long-horizon statistics that a 3-second CNN window cannot easily capture, and should be additive when fused at the embedding level.
+
+**Approach.** Three model stages of increasing modality, each evaluated on the same track-level 80/10/10 split to isolate the marginal contribution of each fusion step. ResNet-18 ImageNet pretraining is reused across all CNN branches under a common training protocol; a small tabular MLP encodes the MIR feature vector before late fusion with the CNN embedding.
+
+**Findings.** Each added component yields a positive accuracy increment: +2.83 pp from spectrogram-modality fusion, +2.32 pp from MIR-feature fusion, finally reaching 81.11% test accuracy at Stage 3. The Stage 3 model trails the most upvoted Kaggle baseline (90.22%, XGBoost on tabular features), but the baseline applies `train_test_split` at the segment level and fits `MinMaxScaler` before splitting; both leak information and inflate the reported accuracy. The residual gap reflects a structural advantage of gradient-boosted trees on small, expert-designed feature matrices.
 
 ## Results
 
@@ -93,6 +103,20 @@ Spectrograms, augmented training set, processed tabular splits, and **trained ch
 Raw audio source: [GTZAN on Kaggle](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data) (1000 × 30 s WAVs, 3-second tabular CSV).
 
 Tested with Python 3.10, PyTorch 2.x (CUDA), `librosa`, `scikit-learn`, `pandas`, `matplotlib`. Seed 42 is fixed for `torch` and `numpy`. Total training time ≈ 30–60 min per stage on a single consumer GPU.
+
+## Citation
+
+If you use this work, please cite:
+
+```bibtex
+@misc{tanjhmultimodalmusicclassification,
+  author = {Tan, Tristan Jin Hau},
+  title  = {Music Genre Classification Using Multi-Branch Convolutional Neural Networks on the GTZAN Dataset},
+  year   = {2026},
+  url    = {https://github.com/tristantanjh/multimodal-music-genre-classifier},
+  note   = {Dataset and trained model checkpoints at https://huggingface.co/datasets/tristantanjh/gtzan-multi-cnn}
+}
+```
 
 ## License
 
