@@ -4,7 +4,7 @@ Music genre classification on the [GTZAN](https://www.kaggle.com/datasets/andrad
 
 > **Final result:** 81.11% top-1 accuracy on a strictly track-split test set, up from 75.96% for a single-modality mel-spectrogram baseline.
 
-The full write-up — including the mathematical derivation of each representation, EDA, augmentation design, and a critique of the standard Kaggle baseline — is in [report/multimodal-music-genre-classifier.pdf](report/multimodal-music-genre-classifier.pdf). Trained checkpoints for all three stages, generated spectrograms, and processed tabular splits are mirrored on [Hugging Face](https://huggingface.co/datasets/tristantanjh/gtzan-multi-cnn) for fast reuse — see [Reproducing](#reproducing).
+Full write-up available in [report/multimodal-music-genre-classifier.pdf](report/multimodal-music-genre-classifier.pdf). Trained checkpoints for all three stages, generated spectrograms, and processed tabular splits are mirrored on [Hugging Face](https://huggingface.co/datasets/tristantanjh/gtzan-multi-cnn) for fast reuse: see [Reproducing](#reproducing).
 
 ## Results
 
@@ -35,8 +35,6 @@ Each stage adds a strictly hypothesis-driven component, and each component yield
 <p align="center">
   <img src="figures/stage3_confusion.png" alt="Stage 3 confusion matrix on the held-out test set" width="520">
 </p>
-
-Classical and jazz are easiest — distinctive timbres and rich chord vocabulary respectively. Pop and rock are hardest, with rock frequently confused for blues/country (shared guitar-dominant timbres) and pop confused for country/disco (overlapping production styles).
 
 ## Architecture
 
@@ -116,19 +114,6 @@ The generated spectrograms, augmented training set, processed tabular splits, an
 This is enough to skip the heavy preprocessing steps and jump straight to evaluation or fine-tuning. The raw audio source is the original [GTZAN dataset on Kaggle](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data) (1000 × 30 s WAVs and the 3-second tabular features CSV).
 
 Tested with Python 3.10, PyTorch 2.x with CUDA, `librosa`, `scikit-learn`, `pandas`, `matplotlib`. Random seed 42 is fixed for `torch` and `numpy`. The notebook runs end-to-end and regenerates all artifacts; total training time is roughly 30–60 minutes per stage on a single consumer GPU.
-
-## Citation
-
-If you find this useful, please cite the underlying dataset and the multimodal-fusion / spectrogram-pretraining work the design draws on:
-
-- Tzanetakis & Cook (2002), *Musical genre classification of audio signals* — GTZAN dataset.
-- Sturm (2013), *The GTZAN dataset: Its contents, its faults, and their effects on evaluation* — known dataset issues.
-- He et al. (2016), *Deep residual learning for image recognition* — ResNet-18 backbone.
-- Park et al. (2019), *SpecAugment* — augmentation scheme.
-- Palanisamy et al. (2020), *Rethinking CNN models for audio classification* — pretrained ImageNet transfer for spectrograms.
-- Wolf-Monheim (2024), *Spectral and rhythm features for audio classification with deep CNNs* — mel/STFT/chroma comparison.
-
-Full bibliography in [report/references.bib](report/references.bib).
 
 ## License
 
